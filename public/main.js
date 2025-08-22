@@ -6,6 +6,10 @@ const messageForm = document.getElementById('message-form')
 const messageInput = document.getElementById('message-input')
 const sendMessageAudio = new Audio('/Sound/COMCell_Message sent (ID 1313)_BSB.mp3')
 
+if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
+}
+
 messageForm.addEventListener('submit', (e) => {
     //safhe refresh nshe
     e.preventDefault()
@@ -33,6 +37,13 @@ function sendMessage(){
 socket.on('chat-message', (data) => {
     console.log(data.message)
     addMsgToUI(false, data)
+
+     if (Notification.permission === "granted") {
+        new Notification(`${data.name} Say:`, {
+            body: data.message,
+            icon: "/favicon.ico"
+        })
+    }
 })
 
 function addMsgToUI(isOwnMessage, data){
